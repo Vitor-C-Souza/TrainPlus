@@ -27,11 +27,13 @@ import org.koin.androidx.compose.koinViewModel
 fun LoginScreen(
     modifier: Modifier = Modifier,
     viewModel: LoginViewModel = koinViewModel(),
+    onNavigateToSignUp: () -> Unit,
 ) {
     LoginScreenContent(
         state = viewModel.state,
         onEvent = viewModel::onEvent,
-        modifier = modifier
+        modifier = modifier,
+        onNavigateToSignUp = onNavigateToSignUp
     )
 }
 
@@ -39,7 +41,8 @@ fun LoginScreen(
 fun LoginScreenContent(
     state: LoginState,
     onEvent: (LoginEvent) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onNavigateToSignUp: () -> Unit
 ) {
 
     val visibleState = remember {
@@ -58,7 +61,7 @@ fun LoginScreenContent(
             modifier = modifier.fillMaxSize(),
             bottomBar = {
                 CreateAccount(
-                    onClick = {}
+                    onClick = { onNavigateToSignUp() }
                 )
             },
         ) { paddingValues ->
@@ -106,6 +109,7 @@ fun LoginScreenContent(
 private fun LoginScreenPreview() {
     LoginScreenContent(
         state = LoginState(),
-        onEvent = {}
+        onEvent = {},
+        onNavigateToSignUp = {}
     )
 }
