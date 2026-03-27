@@ -2,25 +2,21 @@ package br.me.vitorcsouza.train.di
 
 import br.me.vitorcsouza.train.data.repository.AuthRepositoryImpl
 import br.me.vitorcsouza.train.domain.repository.AuthRepository
-import com.google.firebase.Firebase
+import br.me.vitorcsouza.train.domain.usecase.LoginUseCase
+import br.me.vitorcsouza.train.ui.presentation.login.LoginViewModel
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.auth
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.dsl.module
 
-@Module
-@InstallIn(SingletonComponent::class)
-object AppModule {
-    @Provides
-    @Singleton
-    fun provideFirebaseAuth(): FirebaseAuth = Firebase.auth
+val appModule = module {
+    single { FirebaseAuth.getInstance() }
 
-    @Provides
-    @Singleton
-    fun provideAuthRepository(firebaseAuth: FirebaseAuth): AuthRepository {
-        return AuthRepositoryImpl(firebaseAuth)
-    }
+
+    single<AuthRepository> { AuthRepositoryImpl(get()) }
+
+
+    factory { LoginUseCase(get()) }
+
+
+    viewModel { LoginViewModel(get()) }
 }

@@ -5,6 +5,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.*
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import br.me.vitorcsouza.train.ui.presentation.login.LoginScreen
 import br.me.vitorcsouza.train.ui.presentation.splash.SplashScreen
 import br.me.vitorcsouza.train.ui.theme.TrainTheme
@@ -14,8 +17,10 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        hideSystemUI()
+
         setContent {
-            TrainTheme {
+            TrainTheme(darkTheme = false) {
                 var showSplash by remember { mutableStateOf(true) }
 
                 if (showSplash) {
@@ -29,6 +34,14 @@ class MainActivity : ComponentActivity() {
                     showSplash = false
                 }
             }
+        }
+    }
+
+    private fun hideSystemUI() {
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        WindowInsetsControllerCompat(window, window.decorView).let { controller ->
+            controller.hide(WindowInsetsCompat.Type.systemBars())
+            controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
         }
     }
 }
