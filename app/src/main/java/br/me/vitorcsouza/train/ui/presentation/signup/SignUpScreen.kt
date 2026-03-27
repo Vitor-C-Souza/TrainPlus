@@ -14,6 +14,7 @@ import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -29,8 +30,16 @@ fun SignUpScreen(
     viewModel: SignUpViewModel = koinViewModel(),
     onNavigateToLogin: () -> Unit = {}
 ) {
+    val state = viewModel.state
+    
+    LaunchedEffect(state.isSuccess) {
+        if (state.isSuccess) {
+            onNavigateToLogin()
+        }
+    }
+
     SignUpScreenContent(
-        state = viewModel.state,
+        state = state,
         onEvent = viewModel::onEvent,
         onNavigateToLogin = onNavigateToLogin,
         modifier = modifier
