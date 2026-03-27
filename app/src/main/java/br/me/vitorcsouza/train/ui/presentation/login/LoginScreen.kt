@@ -25,8 +25,8 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun LoginScreen(
+    modifier: Modifier = Modifier,
     viewModel: LoginViewModel = koinViewModel(),
-    modifier: Modifier = Modifier
 ) {
     LoginScreenContent(
         state = viewModel.state,
@@ -73,7 +73,7 @@ fun LoginScreenContent(
                 TextFieldCustom(
                     icon = Icons.Outlined.Email,
                     value = state.email,
-                    onValueChange = { onEvent(LoginEvent.onEmailChanged(it)) },
+                    onValueChange = { onEvent(LoginEvent.OnEmailChanged(it)) },
                     placeholder = "Email",
                     isPassword = false
                 )
@@ -81,13 +81,13 @@ fun LoginScreenContent(
                 TextFieldCustom(
                     icon = Icons.Outlined.Lock,
                     value = state.password,
-                    onValueChange = { onEvent(LoginEvent.onPasswordChanged(it)) },
+                    onValueChange = { onEvent(LoginEvent.OnPasswordChanged(it)) },
                     placeholder = "Password",
                     isPassword = true
                 )
 
                 ButtonDefaultCustom(
-                    onClick = { onEvent(LoginEvent.onLoginClick) },
+                    onClick = { onEvent(LoginEvent.OnLoginClick) },
                     text = "Sign in"
                 )
 

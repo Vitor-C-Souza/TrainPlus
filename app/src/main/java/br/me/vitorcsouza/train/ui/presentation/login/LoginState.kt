@@ -9,7 +9,7 @@ data class LoginState(
 )
 
 sealed class LoginEvent {
-    data class onEmailChanged(val email: String) : LoginEvent()
-    data class onPasswordChanged(val password: String) : LoginEvent()
-    object onLoginClick : LoginEvent()
+    data class OnEmailChanged(val email: String) : LoginEvent()
+    data class OnPasswordChanged(val password: String) : LoginEvent()
+    object OnLoginClick : LoginEvent()
 }

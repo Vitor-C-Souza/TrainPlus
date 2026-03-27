@@ -36,7 +36,6 @@ fun TextFieldCustom(
     onValueChange: (String) -> Unit,
     isPassword: Boolean = false,
 ) {
-    // Trocamos TextField por OutlinedTextField para ter a borda completa
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
@@ -74,9 +73,7 @@ fun TextFieldCustom(
             focusedContainerColor = backgroundColor,
             unfocusedContainerColor = backgroundColor,
 
-            // Aqui definimos que a borda inteira muda para a cor de foco (Lime)
             focusedBorderColor = focusRingColor,
-            // Mantemos transparente quando não focado para parecer "border-none"
             unfocusedBorderColor = Color.Transparent,
             disabledBorderColor = Color.Transparent,
 

@@ -17,11 +17,11 @@ class LoginViewModel @Inject constructor(
     
     fun onEvent(event: LoginEvent) {
         when (event) {
-            is LoginEvent.onEmailChanged -> state = state.copy(email = event.email)
+            is LoginEvent.OnEmailChanged -> state = state.copy(email = event.email)
             
-            is LoginEvent.onPasswordChanged -> state = state.copy(password = event.password)
+            is LoginEvent.OnPasswordChanged -> state = state.copy(password = event.password)
             
-            is LoginEvent.onLoginClick -> login()
+            is LoginEvent.OnLoginClick -> login()
         }
     }
 
