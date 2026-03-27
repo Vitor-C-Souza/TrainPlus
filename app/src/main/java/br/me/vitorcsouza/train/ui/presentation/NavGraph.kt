@@ -24,7 +24,7 @@ fun NavGraph(navController: NavHostController) {
         }
 
         composable(Screen.SignUpScreen.route) {
-            SignUpScreen(onNavigateToLogin = { navController.navigate(Screen.LoginScreen.route) })
+            SignUpScreen(onNavigateToLogin = { navController.popBackStack() })
         }
 
 
