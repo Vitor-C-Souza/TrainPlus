@@ -13,3 +13,7 @@ val Pink40 = Color(0xFF7D5260)
 val DarkBlue = Color(0xFF042940)
 val DarkerBlue = Color(0xFF032330)
 val Lime = Color(0xFFDBF227)
+
+val iconColor = Color(0xFF666666)
+val backgroundColor = Color(0xFFF3F3F5)
+val focusRingColor = Color(0xFFDBF227)

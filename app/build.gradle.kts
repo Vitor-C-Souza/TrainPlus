@@ -2,7 +2,6 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.hilt.android)
     alias(libs.plugins.google.services)
     alias(libs.plugins.ksp)
 }
@@ -56,9 +55,9 @@ dependencies {
     // Navigation Compose
     implementation(libs.androidx.navigation.compose)
 
-    // Hilt
-    implementation(libs.hilt.android)
-    ksp(libs.hilt.compiler)
+    // Koin
+    implementation(libs.koin.android)
+    implementation(libs.koin.androidx.compose)
 
     // Firebase
     implementation(platform(libs.firebase.bom))
@@ -70,6 +69,7 @@ dependencies {
 
     // Coil
     implementation(libs.coil.compose)
+    implementation(libs.androidx.compose.animation)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
