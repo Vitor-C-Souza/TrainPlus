@@ -24,7 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import br.me.vitorcsouza.train.ui.theme.backgroundColor
-import br.me.vitorcsouza.train.ui.theme.focusRingColor
+import br.me.vitorcsouza.train.ui.theme.Lime
 import br.me.vitorcsouza.train.ui.theme.iconColor
 
 @Composable
@@ -73,13 +73,13 @@ fun TextFieldCustom(
             focusedContainerColor = backgroundColor,
             unfocusedContainerColor = backgroundColor,
 
-            focusedBorderColor = focusRingColor,
+            focusedBorderColor = Lime,
             unfocusedBorderColor = Color.Transparent,
             disabledBorderColor = Color.Transparent,
 
             focusedTextColor = Color.Black,
             unfocusedTextColor = Color.Black,
-            cursorColor = focusRingColor
+            cursorColor = iconColor
         )
     )
 }
