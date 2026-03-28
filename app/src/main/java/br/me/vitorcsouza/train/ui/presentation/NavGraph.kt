@@ -8,6 +8,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import br.me.vitorcsouza.train.ui.presentation.edit_workout.EditWorkoutScreen
 import br.me.vitorcsouza.train.ui.presentation.home.HomeScreen
 import br.me.vitorcsouza.train.ui.presentation.login.LoginScreen
 import br.me.vitorcsouza.train.ui.presentation.signup.SignUpScreen
@@ -17,6 +18,8 @@ sealed class Screen(val route: String) {
     object LoginScreen : Screen("login_screen")
     object SignUpScreen : Screen("sign_up_screen")
     object HomeScreen : Screen("home_screen")
+
+    object EditWorkoutScreen : Screen("edit_workout_screen")
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -44,7 +47,7 @@ fun NavGraph(navController: NavHostController) {
                         popUpTo(Screen.LoginScreen.route) { inclusive = true }
                     }
                 }
-                )
+            )
         }
 
         composable(Screen.SignUpScreen.route) {
@@ -66,7 +69,15 @@ fun NavGraph(navController: NavHostController) {
             val userId = backStackEntry.arguments?.getString("userId") ?: ""
             HomeScreen(
                 userId = userId,
-                onClick = { /* Navegar para adicionar treino futuramente */ }
+                onClick = { navController.navigate(Screen.EditWorkoutScreen.route) }
+
+            )
+        }
+
+        composable(Screen.EditWorkoutScreen.route) {
+            EditWorkoutScreen(
+                onBack = { navController.popBackStack() },
+                onSave = { navController.popBackStack() }
             )
         }
 

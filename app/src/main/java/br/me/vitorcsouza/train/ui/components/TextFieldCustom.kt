@@ -31,22 +31,26 @@ import br.me.vitorcsouza.train.ui.theme.iconColor
 fun TextFieldCustom(
     modifier: Modifier = Modifier,
     placeholder: String,
-    icon: ImageVector,
+    icon: ImageVector?,
     value: String,
     onValueChange: (String) -> Unit,
     isPassword: Boolean = false,
+    readOnly: Boolean = false
 ) {
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
-        leadingIcon = {
-            Icon(
-                imageVector = icon,
-                tint = iconColor,
-                contentDescription = null,
-                modifier = Modifier.size(20.dp)
-            )
-        },
+        readOnly = readOnly,
+        leadingIcon = if (icon != null) {
+            {
+                Icon(
+                    imageVector = icon,
+                    tint = iconColor,
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp)
+                )
+            }
+        } else null,
         placeholder = {
             Text(
                 text = placeholder,
@@ -58,9 +62,8 @@ fun TextFieldCustom(
         keyboardOptions = KeyboardOptions(
             keyboardType = if (isPassword) KeyboardType.Password else KeyboardType.Text
         ),
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
-            .padding(16.dp)
             .shadow(
                 elevation = 4.dp,
                 shape = RoundedCornerShape(16.dp),
@@ -70,8 +73,8 @@ fun TextFieldCustom(
         shape = RoundedCornerShape(16.dp),
         textStyle = TextStyle(fontSize = 16.sp),
         colors = OutlinedTextFieldDefaults.colors(
-            focusedContainerColor = backgroundColor,
-            unfocusedContainerColor = backgroundColor,
+            focusedContainerColor = Color.White,
+            unfocusedContainerColor = Color.White,
 
             focusedBorderColor = Lime,
             unfocusedBorderColor = Color.Transparent,

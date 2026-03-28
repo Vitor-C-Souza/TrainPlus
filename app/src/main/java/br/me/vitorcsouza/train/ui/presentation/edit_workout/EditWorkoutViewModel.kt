@@ -5,6 +5,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.input.key.type
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import br.me.vitorcsouza.train.domain.model.Exercise
@@ -26,7 +27,7 @@ class EditWorkoutViewModel(
 
     fun onEvent(event: EditWorkoutEvent) {
         when (event) {
-            is EditWorkoutEvent.OnNameChanged -> state = state.copy(workoutName = event.name)
+            is EditWorkoutEvent.OnWorkoutNameChanged -> state = state.copy(workoutName = event.name)
 
             is EditWorkoutEvent.OnDayChanged -> {
                 val day = try {
@@ -73,6 +74,35 @@ class EditWorkoutViewModel(
                     )
                     state = state.copy(exercises = newList)
                 }
+            }
+
+            is EditWorkoutEvent.OnExerciseSetsChanged -> {
+                val newList = state.exercises.toMutableList()
+                if (event.index in newList.indices) {
+                    val sets = event.sets.toIntOrNull() ?: 0
+                    newList[event.index] = newList[event.index].copy(sets = sets)
+                    state = state.copy(exercises = newList)
+                }
+            }
+
+            is EditWorkoutEvent.OnExerciseRepsChanged -> {
+                val newList = state.exercises.toMutableList()
+                if (event.index in newList.indices) {
+                    val reps = event.reps.toIntOrNull() ?: 0
+                    newList[event.index] = newList[event.index].copy(reps = reps)
+                    state = state.copy(exercises = newList)
+                }
+            }
+
+
+            is EditWorkoutEvent.OnExerciseTypeChanged -> {
+                val currentExercises = state.exercises.toMutableList()
+
+                val updatedExercise = currentExercises[event.index].copy(type = event.type)
+
+                currentExercises[event.index] = updatedExercise
+
+                state = state.copy(exercises = currentExercises)
             }
 
             is EditWorkoutEvent.OnSaveWorkout -> saveWorkout()

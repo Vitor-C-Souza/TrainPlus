@@ -30,6 +30,7 @@ import java.time.DayOfWeek
 fun HomeScreen(
     userId: String,
     onClick: () -> Unit,
+    onClickDate: () -> Unit = {},
     viewModel: HomeViewModel = koinViewModel()
 ) {
     val state = viewModel.state
@@ -40,7 +41,8 @@ fun HomeScreen(
 
     HomeScreenContent(
         state = state,
-        onClick = onClick
+        onClick = onClick,
+        onClickDate = onClickDate
     )
 }
 
