@@ -28,13 +28,14 @@ import org.koin.androidx.compose.koinViewModel
 fun SignUpScreen(
     modifier: Modifier = Modifier,
     viewModel: SignUpViewModel = koinViewModel(),
-    onNavigateToLogin: () -> Unit = {}
+    onNavigateToLogin: () -> Unit = {},
+    onRegisterSuccess: () -> Unit
 ) {
     val state = viewModel.state
     
     LaunchedEffect(state.isSuccess) {
         if (state.isSuccess) {
-            onNavigateToLogin()
+            onRegisterSuccess()
         }
     }
 

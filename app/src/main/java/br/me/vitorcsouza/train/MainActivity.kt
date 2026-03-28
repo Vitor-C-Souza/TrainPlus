@@ -1,9 +1,11 @@
 package br.me.vitorcsouza.train
 
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -19,6 +21,7 @@ import br.me.vitorcsouza.train.ui.theme.TrainTheme
 import kotlinx.coroutines.delay
 
 class MainActivity : ComponentActivity() {
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -26,19 +29,19 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val navController = rememberNavController()
+            var showSplash by remember { mutableStateOf(true) }
+
+            LaunchedEffect(Unit) {
+                delay(3000)
+                showSplash = false
+            }
 
             TrainTheme(darkTheme = false) {
-                var showSplash by remember { mutableStateOf(true) }
 
                 if (showSplash) {
                     SplashScreen()
                 } else {
                     NavGraph(navController = navController)
-                }
-
-                LaunchedEffect(Unit) {
-                    delay(3000)
-                    showSplash = false
                 }
             }
         }

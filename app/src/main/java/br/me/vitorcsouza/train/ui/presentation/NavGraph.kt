@@ -22,9 +22,18 @@ sealed class Screen(val route: String) {
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun NavGraph(navController: NavHostController) {
+    val auth = FirebaseAuth.getInstance()
+    val currentUser = auth.currentUser
+
+    val startDestination = if (currentUser != null) {
+        "${Screen.HomeScreen.route}/${currentUser.uid}"
+    } else {
+        Screen.LoginScreen.route
+    }
+
     NavHost(
         navController = navController,
-        startDestination = Screen.LoginScreen.route
+        startDestination = startDestination
     ) {
         composable(Screen.LoginScreen.route) {
             LoginScreen(
@@ -39,7 +48,15 @@ fun NavGraph(navController: NavHostController) {
         }
 
         composable(Screen.SignUpScreen.route) {
-            SignUpScreen(onNavigateToLogin = { navController.popBackStack() })
+            SignUpScreen(
+                onNavigateToLogin = { navController.popBackStack() },
+                onRegisterSuccess = {
+                    val uid = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+                    navController.navigate("${Screen.HomeScreen.route}/$uid") {
+                        popUpTo(Screen.LoginScreen.route) { inclusive = true }
+                    }
+                }
+            )
         }
 
         composable(
