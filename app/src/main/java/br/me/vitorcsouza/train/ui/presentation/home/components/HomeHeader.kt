@@ -54,7 +54,8 @@ fun HomeHeader(
             .fillMaxWidth()
             .shadow(4.dp, headerShape)
             .background(DarkBlue, headerShape)
-            .padding(16.dp)
+            .padding(horizontal = 16.dp, vertical = 24.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Row(
             modifier = Modifier
