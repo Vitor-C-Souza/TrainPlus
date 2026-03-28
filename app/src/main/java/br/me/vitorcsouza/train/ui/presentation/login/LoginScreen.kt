@@ -13,6 +13,7 @@ import androidx.compose.material.icons.outlined.Email
 import androidx.compose.material.icons.outlined.Lock
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -28,7 +29,15 @@ fun LoginScreen(
     modifier: Modifier = Modifier,
     viewModel: LoginViewModel = koinViewModel(),
     onNavigateToSignUp: () -> Unit,
+    onLoginSuccess: () -> Unit,
 ) {
+
+    LaunchedEffect(viewModel.state.isSuccess) {
+        if (viewModel.state.isSuccess) {
+            onLoginSuccess()
+        }
+    }
+
     LoginScreenContent(
         state = viewModel.state,
         onEvent = viewModel::onEvent,
@@ -110,6 +119,5 @@ private fun LoginScreenPreview() {
     LoginScreenContent(
         state = LoginState(),
         onEvent = {},
-        onNavigateToSignUp = {}
-    )
+    ) {}
 }
