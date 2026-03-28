@@ -9,6 +9,7 @@ import br.me.vitorcsouza.train.domain.repository.WorkoutRepository
 import br.me.vitorcsouza.train.domain.usecase.GetWorkoutsUseCase
 import br.me.vitorcsouza.train.domain.usecase.LoginUseCase
 import br.me.vitorcsouza.train.domain.usecase.RegisterUseCase
+import br.me.vitorcsouza.train.ui.presentation.edit_workout.EditWorkoutViewModel
 import br.me.vitorcsouza.train.ui.presentation.home.HomeViewModel
 import br.me.vitorcsouza.train.ui.presentation.login.LoginViewModel
 import br.me.vitorcsouza.train.ui.presentation.signup.SignUpViewModel
@@ -33,4 +34,5 @@ val appModule = module {
     viewModel { LoginViewModel(get()) }
     viewModel { SignUpViewModel(get()) }
     viewModel { HomeViewModel(get()) }
+    viewModel { EditWorkoutViewModel(get(), get()) }
 }

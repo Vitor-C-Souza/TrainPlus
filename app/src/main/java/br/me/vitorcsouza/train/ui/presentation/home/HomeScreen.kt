@@ -65,11 +65,7 @@ fun HomeScreenContent(
                 .padding(paddingValues)
         ) {
             val selectedWorkout = state.selectedWorkout
-            val dayOfWeek = try {
-                DayOfWeek.valueOf(selectedWorkout?.dayOfWeek?.uppercase() ?: "WEDNESDAY")
-            } catch (e: Exception) {
-                DayOfWeek.WEDNESDAY
-            }
+            val dayOfWeek = selectedWorkout?.dayOfWeek ?: DayOfWeek.WEDNESDAY
 
             val completedExercises = selectedWorkout?.exercises?.count { it.isCompleted } ?: 0
             val totalExercises = selectedWorkout?.exercises?.size ?: 0

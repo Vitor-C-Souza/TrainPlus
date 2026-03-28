@@ -26,8 +26,8 @@ class HomeViewModel @Inject constructor(
             val result = getWorkoutsUseCase(userId)
 
             result.onSuccess { workouts ->
-                val today = LocalDate.now().dayOfWeek.name
-                val todayWorkouts = workouts.find { it.dayOfWeek.uppercase() == today }
+                val today = LocalDate.now().dayOfWeek
+                val todayWorkouts = workouts.find { it.dayOfWeek == today }
 
                 state = state.copy(
                     workouts = workouts,
@@ -37,6 +37,7 @@ class HomeViewModel @Inject constructor(
             }.onFailure { error ->
                 state = state.copy(
                     errorMessage = error.message ?: "Unknown error",
+                    isLoading = false
                 )
             }
         }
