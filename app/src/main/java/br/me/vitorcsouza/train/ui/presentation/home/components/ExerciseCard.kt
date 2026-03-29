@@ -1,6 +1,5 @@
 package br.me.vitorcsouza.train.ui.presentation.home.components
 
-import android.R
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -25,6 +24,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import br.me.vitorcsouza.train.domain.model.ExerciseType
 import br.me.vitorcsouza.train.ui.theme.DarkBlue
 import br.me.vitorcsouza.train.ui.theme.Lime
 
@@ -35,8 +35,15 @@ fun ExerciseCard(
     exerciseName: String = "Calf Raises",
     repeat: Int = 20,
     series: Int = 4,
+    exerciseType: ExerciseType = ExerciseType.Normal,
     checkButton: () -> Unit,
 ) {
+    val (tagBackgroundColor, tagTextColor) = when (exerciseType) {
+        ExerciseType.Normal -> Color(0xFFE5E7EB) to Color(0xFF4B5563)
+        ExerciseType.Progression -> Color(0xFFDBEAFE) to Color(0xFF2563EB)
+        ExerciseType.Drop_Set -> Color(0xFFFFEDD5) to Color(0xFFD97706)
+    }
+
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -55,9 +62,9 @@ fun ExerciseCard(
                 modifier = Modifier.size(40.dp)
             ) {
                 Icon(
-                    imageVector = if(isCheckedExercise) Icons.Filled.Circle else Icons.Outlined.Circle,
+                    imageVector = if (isCheckedExercise) Icons.Filled.Circle else Icons.Outlined.Circle,
                     contentDescription = "Check Exercise",
-                    tint = if(!isCheckedExercise) Color.Gray.copy(alpha = 0.6f) else Lime,
+                    tint = if (!isCheckedExercise) Color.Gray.copy(alpha = 0.6f) else Lime,
                     modifier = Modifier.size(32.dp)
                 )
             }
@@ -72,7 +79,7 @@ fun ExerciseCard(
                         textDecoration = if (isCheckedExercise) TextDecoration.LineThrough else TextDecoration.None
                     ),
                     fontWeight = FontWeight.Bold,
-                    color = if(isCheckedExercise) DarkBlue.copy(0.6f) else DarkBlue
+                    color = if (isCheckedExercise) DarkBlue.copy(0.6f) else DarkBlue
                 )
 
                 Row(
@@ -82,14 +89,15 @@ fun ExerciseCard(
                     Text(
                         text = "$series x $repeat",
                         style = MaterialTheme.typography.bodyMedium,
+                        color = if (isCheckedExercise) Color.Gray else Color.Unspecified
                     )
 
                     Text(
-                        text = "Normal",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = Color(0xFF4B5563),
+                        text = exerciseType.name.replace("_", " "),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = tagTextColor,
                         modifier = Modifier
-                            .background(Color(0xFFE5E7EB), RoundedCornerShape(8.dp))
+                            .background(tagBackgroundColor, RoundedCornerShape(8.dp))
                             .padding(horizontal = 10.dp, vertical = 4.dp)
                     )
                 }
@@ -106,18 +114,33 @@ private fun ExerciseCardPreviewUnChecked() {
         isCheckedExercise = false,
         exerciseName = "Calf Raises",
         repeat = 20,
-        series = 4
+        series = 4,
+        exerciseType = ExerciseType.Normal
     )
 }
 
 @Preview(showBackground = true)
 @Composable
-private fun ExerciseCardPreviewChecked() {
+private fun ExerciseCardPreviewProgression() {
     ExerciseCard(
         checkButton = {},
-        isCheckedExercise = true,
-        exerciseName = "Squats",
-        repeat = 10,
-        series = 4
+        isCheckedExercise = false,
+        exerciseName = "Leg Press",
+        repeat = 12,
+        series = 4,
+        exerciseType = ExerciseType.Progression
+    )
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ExerciseCardPreviewDropSet() {
+    ExerciseCard(
+        checkButton = {},
+        isCheckedExercise = false,
+        exerciseName = "Leg Curls",
+        repeat = 15,
+        series = 3,
+        exerciseType = ExerciseType.Drop_Set
     )
 }

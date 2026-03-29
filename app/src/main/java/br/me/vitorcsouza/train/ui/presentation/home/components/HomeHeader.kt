@@ -29,13 +29,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import br.me.vitorcsouza.train.ui.theme.DarkBlue
 import br.me.vitorcsouza.train.ui.theme.Lime
-import java.time.DayOfWeek
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun HomeHeader(
     modifier: Modifier = Modifier,
-    dayOfWeek: DayOfWeek = DayOfWeek.WEDNESDAY,
+    dayOfWeek: String = "WEDNESDAY",
     workoutName: String = "Leg Day",
     completedWorkouts: Int = 2,
     totalWorkouts: Int = 5,
@@ -67,7 +66,7 @@ fun HomeHeader(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 Text(
-                    text = dayOfWeek.toString(),
+                    text = dayOfWeek,
                     color = Lime,
                     style = MaterialTheme.typography.labelSmall
                 )
@@ -110,7 +109,7 @@ fun HomeHeader(
 @Composable
 private fun HomeHeaderPreview() {
     HomeHeader(
-        dayOfWeek = DayOfWeek.WEDNESDAY,
+        dayOfWeek = "WEDNESDAY",
         workoutName = "Leg Day",
         completedWorkouts = 2,
         totalMinutes = 45,

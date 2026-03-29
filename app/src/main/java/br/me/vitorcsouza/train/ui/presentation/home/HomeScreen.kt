@@ -42,7 +42,12 @@ fun HomeScreen(
     HomeScreenContent(
         state = state,
         onClick = onClick,
-        onClickDate = onClickDate
+        onClickDate = onClickDate,
+        onToggleExerciseStatus = { exerciseId, isCompleted ->
+            state.selectedWorkout?.id?.let { workoutId ->
+                viewModel.toggleExerciseStatus(workoutId, exerciseId, isCompleted)
+            }
+        }
     )
 }
 
@@ -51,7 +56,8 @@ fun HomeScreen(
 fun HomeScreenContent(
     state: HomeState,
     onClick: () -> Unit,
-    onClickDate: () -> Unit = {}
+    onClickDate: () -> Unit = {},
+    onToggleExerciseStatus: (String, Boolean) -> Unit = { _, _ -> }
 ) {
     Scaffold(
         floatingActionButton = {
@@ -67,7 +73,7 @@ fun HomeScreenContent(
                 .padding(paddingValues)
         ) {
             val selectedWorkout = state.selectedWorkout
-            val dayOfWeek = selectedWorkout?.dayOfWeek ?: DayOfWeek.WEDNESDAY
+            val dayOfWeek = selectedWorkout?.dayOfWeek ?: DayOfWeek.WEDNESDAY.name
 
             val completedExercises = selectedWorkout?.exercises?.count { it.isCompleted } ?: 0
             val totalExercises = selectedWorkout?.exercises?.size ?: 0
@@ -85,7 +91,9 @@ fun HomeScreenContent(
             Spacer(modifier = Modifier.height(16.dp))
 
             LazyColumn(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 16.dp),
                 contentPadding = PaddingValues(bottom = 80.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
@@ -96,7 +104,10 @@ fun HomeScreenContent(
                             series = exercise.sets,
                             repeat = exercise.reps,
                             isCheckedExercise = exercise.isCompleted,
-                            checkButton = { /* TODO: Marcar como concluído */ }
+                            exerciseType = exercise.type,
+                            checkButton = {
+                                onToggleExerciseStatus(exercise.id, !exercise.isCompleted)
+                            }
                         )
                     }
                 }

@@ -8,6 +8,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import br.me.vitorcsouza.train.domain.model.Workout
+import br.me.vitorcsouza.train.domain.repository.WorkoutRepository
 import br.me.vitorcsouza.train.domain.usecase.GetWorkoutsUseCase
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -15,7 +16,8 @@ import javax.inject.Inject
 
 @RequiresApi(Build.VERSION_CODES.O)
 class HomeViewModel @Inject constructor(
-    private val getWorkoutsUseCase: GetWorkoutsUseCase
+    private val getWorkoutsUseCase: GetWorkoutsUseCase,
+    private val workoutRepository: WorkoutRepository
 ) : ViewModel() {
     var state by mutableStateOf(HomeState())
         private set
@@ -26,7 +28,7 @@ class HomeViewModel @Inject constructor(
             val result = getWorkoutsUseCase(userId)
 
             result.onSuccess { workouts ->
-                val today = LocalDate.now().dayOfWeek
+                val today = LocalDate.now().dayOfWeek.name
                 val todayWorkouts = workouts.find { it.dayOfWeek == today }
 
                 state = state.copy(
@@ -42,6 +44,25 @@ class HomeViewModel @Inject constructor(
             }
         }
     }
+
+    fun toggleExerciseStatus(workoutId: String, exerciseId: String, isCompleted: Boolean) {
+        viewModelScope.launch {
+            val result = workoutRepository.toggleExerciseStatus(workoutId, exerciseId, isCompleted)
+            if (result.isSuccess) {
+                state.selectedWorkout?.let { workout ->
+                    if (workout.id == workoutId) {
+                        val updatedExercises = workout.exercises.map {
+                            if (it.id == exerciseId) it.copy(isCompleted = isCompleted) else it
+                        }
+                        state = state.copy(
+                            selectedWorkout = workout.copy(exercises = updatedExercises)
+                        )
+                    }
+                }
+            }
+        }
+    }
+
     suspend fun getWorkouts(userId: String): Result<List<Workout>> {
         return getWorkoutsUseCase(userId)
     }

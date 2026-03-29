@@ -33,6 +33,6 @@ val appModule = module {
 
     viewModel { LoginViewModel(get()) }
     viewModel { SignUpViewModel(get()) }
-    viewModel { HomeViewModel(get()) }
+    viewModel { HomeViewModel(get(), get()) }
     viewModel { EditWorkoutViewModel(get(), get()) }
 }
