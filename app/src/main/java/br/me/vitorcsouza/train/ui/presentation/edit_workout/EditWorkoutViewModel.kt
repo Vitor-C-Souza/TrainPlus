@@ -5,7 +5,6 @@ import androidx.annotation.RequiresApi
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.input.key.type
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import br.me.vitorcsouza.train.domain.model.Exercise
@@ -13,7 +12,7 @@ import br.me.vitorcsouza.train.domain.model.Workout
 import br.me.vitorcsouza.train.domain.repository.WorkoutRepository
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
-import java.time.DayOfWeek
+import java.util.Collections
 import java.util.UUID.randomUUID
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -27,27 +26,28 @@ class EditWorkoutViewModel(
 
     fun onEvent(event: EditWorkoutEvent) {
         when (event) {
+            is EditWorkoutEvent.OnLoadWorkouts -> loadWorkouts(event.userId)
+
             is EditWorkoutEvent.OnWorkoutNameChanged -> state = state.copy(workoutName = event.name)
 
             is EditWorkoutEvent.OnDayChanged -> {
-                val day = try {
-                    DayOfWeek.valueOf(event.day.uppercase())
-                } catch (e: Exception) {
-                    state.dayOfWeek
+                val selectedDay = event.day.uppercase().trim()
+
+                val existingWorkout = state.workouts.find {
+                    it.dayOfWeek.uppercase().trim() == selectedDay
                 }
-                state = state.copy(dayOfWeek = day)
+
+                state = state.copy(
+                    dayOfWeek = selectedDay,
+                    id = existingWorkout?.id ?: "",
+                    workoutName = existingWorkout?.name ?: "",
+                    exercises = existingWorkout?.exercises ?: emptyList()
+                )
             }
 
             is EditWorkoutEvent.OnAddExercise -> {
                 val newList = state.exercises.toMutableList().apply {
-                    add(
-                        Exercise(
-                            id = randomUUID().toString(),
-                            name = "",
-                            sets = 0,
-                            reps = 0
-                        )
-                    )
+                    add(Exercise(id = randomUUID().toString()))
                 }
                 state = state.copy(exercises = newList)
             }
@@ -61,17 +61,6 @@ class EditWorkoutViewModel(
                 val newList = state.exercises.toMutableList()
                 if (event.index in newList.indices) {
                     newList[event.index] = newList[event.index].copy(name = event.name)
-                    state = state.copy(exercises = newList)
-                }
-            }
-
-            is EditWorkoutEvent.OnExerciseDetailsChanged -> {
-                val newList = state.exercises.toMutableList()
-                if (event.index in newList.indices) {
-                    newList[event.index] = newList[event.index].copy(
-                        sets = event.sets,
-                        reps = event.reps
-                    )
                     state = state.copy(exercises = newList)
                 }
             }
@@ -94,18 +83,48 @@ class EditWorkoutViewModel(
                 }
             }
 
-
             is EditWorkoutEvent.OnExerciseTypeChanged -> {
                 val currentExercises = state.exercises.toMutableList()
+                if (event.index in currentExercises.indices) {
+                    val updatedExercise = currentExercises[event.index].copy(type = event.type)
+                    currentExercises[event.index] = updatedExercise
+                    state = state.copy(exercises = currentExercises)
+                }
+            }
 
-                val updatedExercise = currentExercises[event.index].copy(type = event.type)
-
-                currentExercises[event.index] = updatedExercise
-
-                state = state.copy(exercises = currentExercises)
+            is EditWorkoutEvent.OnMoveExercise -> {
+                val newList = state.exercises.toMutableList()
+                if (event.from in newList.indices && event.to in newList.indices) {
+                    Collections.swap(newList, event.from, event.to)
+                    state = state.copy(exercises = newList)
+                }
             }
 
             is EditWorkoutEvent.OnSaveWorkout -> saveWorkout()
+            else -> {}
+        }
+    }
+
+    private fun loadWorkouts(userId: String) {
+        viewModelScope.launch {
+            state = state.copy(isLoading = true, error = null)
+
+            workoutRepository.getWorkouts(userId).onSuccess { workouts ->
+                val currentDay = state.dayOfWeek.uppercase().trim()
+                val currentDayWorkout = workouts.find {
+                    it.dayOfWeek.uppercase().trim() == currentDay
+                }
+
+                state = state.copy(
+                    workouts = workouts,
+                    id = currentDayWorkout?.id ?: "",
+                    workoutName = currentDayWorkout?.name ?: "",
+                    exercises = currentDayWorkout?.exercises ?: emptyList(),
+                    isLoading = false
+                )
+            }.onFailure {
+                state = state.copy(isLoading = false, error = it.message)
+            }
         }
     }
 
@@ -128,12 +147,13 @@ class EditWorkoutViewModel(
                 workoutRepository.updateWorkout(workout)
             }
 
-            state = if (result.isSuccess) {
-                state.copy(isSaved = true, isLoading = false)
+            if (result.isSuccess) {
+                loadWorkouts(userId)
+                state = state.copy(isSaved = true, isLoading = false)
             } else {
-                state.copy(
+                state = state.copy(
                     isLoading = false,
-                    error = result.exceptionOrNull()?.message ?: "Failed to save"
+                    error = result.exceptionOrNull()?.message ?: "Falha ao salvar"
                 )
             }
         }

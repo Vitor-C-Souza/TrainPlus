@@ -69,7 +69,7 @@ fun EditHeader(
         )
 
         Button(
-            onClick = onSave,
+            onClick = { onSave() },
             colors = ButtonDefaults.buttonColors(
                 containerColor = Lime,
                 contentColor = DarkBlue

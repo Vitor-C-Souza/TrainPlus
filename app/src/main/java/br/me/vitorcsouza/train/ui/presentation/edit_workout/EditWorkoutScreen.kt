@@ -1,10 +1,8 @@
 package br.me.vitorcsouza.train.ui.presentation.edit_workout
 
-import android.content.ClipData
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material3.Icon
@@ -22,6 +21,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -33,6 +33,7 @@ import br.me.vitorcsouza.train.ui.presentation.edit_workout.components.ExerciseE
 import br.me.vitorcsouza.train.ui.presentation.edit_workout.components.InputWorkoutName
 import br.me.vitorcsouza.train.ui.theme.DarkBlue
 import br.me.vitorcsouza.train.ui.theme.TrainTheme
+import com.google.firebase.auth.FirebaseAuth
 import org.koin.androidx.compose.koinViewModel
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -40,13 +41,28 @@ import org.koin.androidx.compose.koinViewModel
 fun EditWorkoutScreen(
     viewModel: EditWorkoutViewModel = koinViewModel(),
     onBack: () -> Unit = {},
-    onSave: () -> Unit = {}
+    onSaveSuccess: () -> Unit = {}
 ) {
+    val state = viewModel.state
+    val userId = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+
+    LaunchedEffect(userId) {
+        if (userId.isNotEmpty()) {
+            viewModel.onEvent(EditWorkoutEvent.OnLoadWorkouts(userId))
+        }
+    }
+
+    LaunchedEffect(state.isSaved) {
+        if (state.isSaved) {
+            onSaveSuccess()
+        }
+    }
+
     EditWorkoutContent(
-        state = viewModel.state,
+        state = state,
         onEvent = viewModel::onEvent,
         onBack = onBack,
-        onSave = onSave
+        onSave = { viewModel.onEvent(EditWorkoutEvent.OnSaveWorkout) }
     )
 }
 
@@ -58,6 +74,8 @@ fun EditWorkoutContent(
     onBack: () -> Unit,
     onSave: () -> Unit
 ) {
+    val lazyListState = rememberLazyListState()
+
     Scaffold(
         topBar = {
             EditHeader(
@@ -67,6 +85,7 @@ fun EditWorkoutContent(
         }
     ) { paddingValues ->
         LazyColumn(
+            state = lazyListState,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues),
@@ -78,7 +97,7 @@ fun EditWorkoutContent(
                 )
 
                 DayOfWeekSelector(
-                    selectedDay = state.dayOfWeek.name,
+                    selectedDay = state.dayOfWeek,
                     onDaySelected = { onEvent(EditWorkoutEvent.OnDayChanged(it)) }
                 )
             }
@@ -119,34 +138,13 @@ fun EditWorkoutContent(
             ) { index, exercise ->
                 ExerciseEditCard(
                     exercise = exercise,
-                    onNameChange = {
-                        onEvent(
-                            EditWorkoutEvent.OnExerciseNameChanged(
-                                index,
-                                it
-                            )
-                        )
-                    },
-                    onSetsChange = {
-                        onEvent(
-                            EditWorkoutEvent.OnExerciseSetsChanged(
-                                index,
-                                it
-                            )
-                        )
-                    },
-                    onRepsChange = {
-                        onEvent(
-                            EditWorkoutEvent.OnExerciseRepsChanged(
-                                index,
-                                it
-                            )
-                        )
-                    },
-                    onTypeChange = { newType ->
-                        onEvent(EditWorkoutEvent.OnExerciseTypeChanged(index, newType))
-                    },
-                    onRemove = { onEvent(EditWorkoutEvent.OnRemoveExercise(index.toString())) }
+                    onNameChange = { onEvent(EditWorkoutEvent.OnExerciseNameChanged(index, it)) },
+                    onSetsChange = { onEvent(EditWorkoutEvent.OnExerciseSetsChanged(index, it)) },
+                    onRepsChange = { onEvent(EditWorkoutEvent.OnExerciseRepsChanged(index, it)) },
+                    onTypeChange = { newType -> onEvent(EditWorkoutEvent.OnExerciseTypeChanged(index, newType)) },
+                    onRemove = { onEvent(EditWorkoutEvent.OnRemoveExercise(exercise.id)) },
+                    onMoveUp = { if (index > 0) onEvent(EditWorkoutEvent.OnMoveExercise(index, index - 1)) },
+                    onMoveDown = { if (index < state.exercises.size - 1) onEvent(EditWorkoutEvent.OnMoveExercise(index, index + 1)) }
                 )
             }
 

@@ -77,7 +77,7 @@ fun NavGraph(navController: NavHostController) {
         composable(Screen.EditWorkoutScreen.route) {
             EditWorkoutScreen(
                 onBack = { navController.popBackStack() },
-                onSave = { navController.popBackStack() }
+                onSaveSuccess = { navController.popBackStack() }
             )
         }
 
