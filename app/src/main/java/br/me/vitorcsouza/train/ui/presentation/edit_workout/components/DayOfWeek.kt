@@ -1,5 +1,7 @@
 package br.me.vitorcsouza.train.ui.presentation.edit_workout.components
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -20,13 +22,21 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import br.me.vitorcsouza.train.ui.theme.DarkBlue
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun DayOfWeekSelector(
-    selectedDay: String = "Mon",
+    selectedDay: String = "MONDAY",
     onDaySelected: (String) -> Unit = {}
-    ) {
-
-    val days = listOf("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
+) {
+    val dayMapping = listOf(
+        "Mon" to "MONDAY",
+        "Tue" to "TUESDAY",
+        "Wed" to "WEDNESDAY",
+        "Thu" to "THURSDAY",
+        "Fri" to "FRIDAY",
+        "Sat" to "SATURDAY",
+        "Sun" to "SUNDAY"
+    )
 
     Column(
         modifier = Modifier
@@ -48,11 +58,11 @@ fun DayOfWeekSelector(
             verticalArrangement = Arrangement.spacedBy(8.dp),
             maxItemsInEachRow = 4
         ) {
-            days.forEach { day ->
+            dayMapping.forEach { (label, value) ->
                 DayOfWeekCard(
-                    dayOfWeek = day,
-                    isSelected = day == selectedDay,
-                    onClick = { onDaySelected(day) }
+                    dayOfWeek = label,
+                    isSelected = value == selectedDay,
+                    onClick = { onDaySelected(value) }
                 )
             }
         }
@@ -65,7 +75,7 @@ fun DayOfWeekCard(
     dayOfWeek: String = "Mon",
     isSelected: Boolean = false,
     onClick: () -> Unit = {}
-    ) {
+) {
     val backgroundColor = if (isSelected) DarkBlue else Color(0xFFF3F3F5)
     val textColor = if (isSelected) Color.White else DarkBlue
 
@@ -82,19 +92,20 @@ fun DayOfWeekCard(
             )
             .clip(RoundedCornerShape(12.dp))
             .background(backgroundColor)
-            .clickable { onClick() } // Torna clicável
+            .clickable { onClick() }
             .padding(horizontal = 20.dp, vertical = 10.dp)
     )
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview(showBackground = true)
 @Composable
 private fun DayOfWeekPreview() {
-    DayOfWeekSelector(selectedDay = "Wed")
+    DayOfWeekSelector(selectedDay = "WEDNESDAY")
 }
 
-@Preview(showBackground = true)
 @Composable
+@Preview(showBackground = true)
 private fun DayOfWeekCardPreview() {
     DayOfWeekCard(dayOfWeek = "Mon")
 }
