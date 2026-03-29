@@ -12,14 +12,15 @@ import br.me.vitorcsouza.train.ui.presentation.edit_workout.EditWorkoutScreen
 import br.me.vitorcsouza.train.ui.presentation.home.HomeScreen
 import br.me.vitorcsouza.train.ui.presentation.login.LoginScreen
 import br.me.vitorcsouza.train.ui.presentation.signup.SignUpScreen
+import br.me.vitorcsouza.train.ui.presentation.weekly_plan.WeeklyPlanScreen
 import com.google.firebase.auth.FirebaseAuth
 
 sealed class Screen(val route: String) {
     object LoginScreen : Screen("login_screen")
     object SignUpScreen : Screen("sign_up_screen")
     object HomeScreen : Screen("home_screen")
-
     object EditWorkoutScreen : Screen("edit_workout_screen")
+    object WeeklyPlanScreen : Screen("weekly_plan_screen")
 }
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -69,8 +70,8 @@ fun NavGraph(navController: NavHostController) {
             val userId = backStackEntry.arguments?.getString("userId") ?: ""
             HomeScreen(
                 userId = userId,
-                onClick = { navController.navigate(Screen.EditWorkoutScreen.route) }
-
+                onClick = { navController.navigate(Screen.EditWorkoutScreen.route) },
+                onClickDate = { navController.navigate("${Screen.WeeklyPlanScreen.route}/$userId") }
             )
         }
 
@@ -81,5 +82,15 @@ fun NavGraph(navController: NavHostController) {
             )
         }
 
+        composable(
+            route = "${Screen.WeeklyPlanScreen.route}/{userId}",
+            arguments = listOf(navArgument("userId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val userId = backStackEntry.arguments?.getString("userId") ?: ""
+            WeeklyPlanScreen(
+                userId = userId,
+                onBack = { navController.popBackStack() }
+            )
+        }
     }
 }

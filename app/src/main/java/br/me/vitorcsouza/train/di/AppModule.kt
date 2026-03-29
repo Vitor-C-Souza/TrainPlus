@@ -13,9 +13,10 @@ import br.me.vitorcsouza.train.ui.presentation.edit_workout.EditWorkoutViewModel
 import br.me.vitorcsouza.train.ui.presentation.home.HomeViewModel
 import br.me.vitorcsouza.train.ui.presentation.login.LoginViewModel
 import br.me.vitorcsouza.train.ui.presentation.signup.SignUpViewModel
+import br.me.vitorcsouza.train.ui.presentation.weekly_plan.WeeklyPlanViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import org.koin.androidx.viewmodel.dsl.viewModel
+import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -30,9 +31,9 @@ val appModule = module {
     factory { RegisterUseCase(get()) }
     factory { GetWorkoutsUseCase(get()) }
 
-
-    viewModel { LoginViewModel(get()) }
-    viewModel { SignUpViewModel(get()) }
-    viewModel { HomeViewModel(get(), get()) }
-    viewModel { EditWorkoutViewModel(get(), get()) }
+    viewModelOf(::LoginViewModel)
+    viewModelOf(::SignUpViewModel)
+    viewModelOf(::HomeViewModel)
+    viewModelOf(::EditWorkoutViewModel)
+    viewModelOf(::WeeklyPlanViewModel)
 }
