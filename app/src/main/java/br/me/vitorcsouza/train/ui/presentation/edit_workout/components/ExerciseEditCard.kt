@@ -21,6 +21,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -52,7 +53,7 @@ fun ExerciseEditCard(
     onMoveDown: () -> Unit = {}
 ) {
     var expanded by remember { mutableStateOf(false) }
-    
+
     // Variável para acumular a distância do arrasto
     var dragAmountAccumulated by remember { mutableFloatStateOf(0f) }
     val dragThreshold = 80f // Distância necessária para trocar de posição
@@ -80,7 +81,7 @@ fun ExerciseEditCard(
                             onDrag = { change, dragAmount ->
                                 change.consume()
                                 dragAmountAccumulated += dragAmount.y
-                                
+
                                 if (dragAmountAccumulated > dragThreshold) {
                                     onMoveDown()
                                     dragAmountAccumulated = 0f
@@ -164,7 +165,7 @@ fun ExerciseEditCard(
                             readOnly = true,
                             placeholder = "Type",
                             icon = null,
-                            modifier = Modifier.menuAnchor(),
+                            modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable, true),
                         )
 
                         ExposedDropdownMenu(

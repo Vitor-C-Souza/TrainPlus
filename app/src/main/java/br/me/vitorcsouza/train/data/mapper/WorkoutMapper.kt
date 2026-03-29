@@ -13,20 +13,22 @@ fun WorkoutEntity.toDomain(): Workout {
     )
 }
 
-fun Workout.toEntity(): WorkoutEntity {
+fun Workout.toEntity(isSynced: Boolean = true, isPendingDelete: Boolean = false): WorkoutEntity {
     return WorkoutEntity(
         id = id,
         userId = userId,
         dayOfWeek = dayOfWeek,
         name = name,
-        exercises = exercises
+        exercises = exercises,
+        isSynced = isSynced,
+        isPendingDelete = isPendingDelete
     )
 }
 
 fun List<WorkoutEntity>.toDomainList(): List<Workout> {
-    return map { it.toDomain() }
+    return filter { !it.isPendingDelete }.map { it.toDomain() }
 }
 
-fun List<Workout>.toEntityList(): List<WorkoutEntity> {
-    return map { it.toEntity() }
+fun List<Workout>.toEntityList(isSynced: Boolean = true): List<WorkoutEntity> {
+    return map { it.toEntity(isSynced) }
 }

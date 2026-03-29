@@ -18,11 +18,13 @@ class WeeklyPlanViewModel(
     fun loadWorkouts(userId: String) {
         viewModelScope.launch {
             state = state.copy(isLoading = true)
-            getWorkoutsUseCase(userId).onSuccess { workouts ->
-                state = state.copy(
-                    workouts = workouts,
-                    isLoading = false
-                )
+            getWorkoutsUseCase.refresh(userId).onSuccess {
+                getWorkoutsUseCase.observe(userId).collect { workouts ->
+                    state = state.copy(
+                        workouts = workouts,
+                        isLoading = false
+                    )
+                }
             }.onFailure { error ->
                 state = state.copy(
                     errorMessage = error.message ?: "Unknown error",

@@ -10,5 +10,9 @@ data class WorkoutEntity(
     val userId: String,
     val dayOfWeek: String,
     val name: String,
-    val exercises: List<Exercise>
+    val exercises: List<Exercise>,
+    // Flag para controle de sincronização com o Firebase
+    val isSynced: Boolean = true,
+    // Flag para "soft delete" - permite deletar localmente e sincronizar o delete depois
+    val isPendingDelete: Boolean = false
 )

@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.text.ClickableText
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -18,9 +18,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalInspectionMode
+import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withLink
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -63,32 +66,29 @@ fun CreateAccount(
                     append("Don't have an account? ")
                 }
 
-                pushStringAnnotation(tag = "SignUp", annotation = "SignUp")
-                withStyle(
-                    style = SpanStyle(
-                        color = DarkBlue,
-                        fontWeight = FontWeight.SemiBold
+                withLink(
+                    LinkAnnotation.Clickable(
+                        tag = "SignUp",
+                        styles = TextLinkStyles(
+                            style = SpanStyle(
+                                color = DarkBlue,
+                                fontWeight = FontWeight.SemiBold
+                            )
+                        ),
+                        linkInteractionListener = {
+                            onClick()
+                        }
                     )
                 ) {
                     append("Create Account")
                 }
-                pop()
             }
 
-            ClickableText(
+            Text(
                 text = annotatedText,
                 style = androidx.compose.ui.text.TextStyle(
                     fontSize = 14.sp
-                ),
-                onClick = { offset ->
-                    annotatedText.getStringAnnotations(
-                        tag = "SignUp",
-                        start = offset,
-                        end = offset
-                    ).firstOrNull()?.let {
-                        onClick()
-                    }
-                }
+                )
             )
         }
     }

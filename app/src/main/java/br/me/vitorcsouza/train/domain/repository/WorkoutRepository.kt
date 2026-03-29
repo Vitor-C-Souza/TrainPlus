@@ -2,6 +2,7 @@ package br.me.vitorcsouza.train.domain.repository
 
 import br.me.vitorcsouza.train.domain.model.Exercise
 import br.me.vitorcsouza.train.domain.model.Workout
+import kotlinx.coroutines.flow.Flow
 
 interface WorkoutRepository {
     suspend fun getWorkouts(userId: String): Result<List<Workout>>
@@ -9,9 +10,17 @@ interface WorkoutRepository {
     suspend fun deleteWorkout(workoutId: String): Result<Unit>
     suspend fun updateWorkout(workout: Workout): Result<Unit>
 
+    fun getWorkoutsFlow(userId: String): Flow<List<Workout>>
+    suspend fun fetchWorkoutsFromRemote(userId: String): Result<Unit>
+
+
     suspend fun addExerciseToWorkout(workoutId: String, exercise: Exercise): Result<Unit>
     suspend fun deleteExerciseFromWorkout(workoutId: String, exerciseId: String): Result<Unit>
     suspend fun updateExerciseInWorkout(workoutId: String, exercise: Exercise): Result<Unit>
 
-    suspend fun toggleExerciseStatus(workoutId: String, exerciseId: String, isCompleted: Boolean): Result<Unit>
+    suspend fun toggleExerciseStatus(
+        workoutId: String,
+        exerciseId: String,
+        isCompleted: Boolean
+    ): Result<Unit>
 }
