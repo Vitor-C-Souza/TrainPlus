@@ -1,6 +1,8 @@
 package br.me.vitorcsouza.train.data.repository
 
 import android.content.Context
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.work.BackoffPolicy
 import androidx.work.Constraints
 import androidx.work.ExistingWorkPolicy
@@ -36,10 +38,31 @@ class WorkoutRepositoryImpl @Inject constructor(
 
     private val workoutCollection = firebaseFirestore.collection("workouts")
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun getWorkoutsFlow(userId: String): Flow<List<Workout>> {
         return workoutDao.getWorkoutsFlow(userId).map { entities ->
-            entities.toDomainList()
+            entities.map { entity ->
+                val workout = entity.toDomain()
+
+                if (!isSameDay(workout.lastUpdated)) {
+                    resetWorkoutExercises(workout)
+                } else {
+                    workout
+                }
+            }
         }
+    }
+
+    private suspend fun resetWorkoutExercises(workout: Workout): Workout {
+        val resetExercises = workout.exercises.map { it.copy(isCompleted = false) }
+        val updatedWorkout = workout.copy(
+            exercises = resetExercises,
+            lastUpdated = System.currentTimeMillis()
+        )
+
+        workoutDao.insertWorkout(updatedWorkout.toEntity())
+
+        return updatedWorkout
     }
 
     override suspend fun fetchWorkoutsFromRemote(userId: String): Result<Unit> {
@@ -204,5 +227,14 @@ class WorkoutRepositoryImpl @Inject constructor(
             ExistingWorkPolicy.REPLACE,
             syncRequest
         )
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun isSameDay(timestamp: Long): Boolean {
+        val lastUpdateDate = java.time.Instant.ofEpochMilli(timestamp)
+            .atZone(java.time.ZoneId.systemDefault())
+            .toLocalDate()
+        val today = java.time.LocalDate.now()
+        return lastUpdateDate.isEqual(today)
     }
 }
